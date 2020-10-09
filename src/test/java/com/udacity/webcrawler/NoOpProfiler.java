@@ -11,19 +11,19 @@ import java.util.Objects;
  */
 public final class NoOpProfiler implements Profiler {
 
-  @Override
-  public <T> T wrap(Class<T> klass, T delegate) {
-    Objects.requireNonNull(klass);
-    return Objects.requireNonNull(delegate);
-  }
+    @Override
+    public <T> T wrap(Class<T> klass, T delegate) {
+        Objects.requireNonNull(klass);
+        return Objects.requireNonNull(delegate);
+    }
 
-  @Override
-  public void writeData(Path path) {
-    Objects.requireNonNull(path);
-  }
+    @Override
+    public void writeData(Path path) {
+        Objects.requireNonNull(path);
+    }
 
-  @Override
-  public void writeData(Writer writer) {
-    Objects.requireNonNull(writer);
-  }
+    @Override
+    public void writeData(Writer writer) {
+        Objects.requireNonNull(writer);
+    }
 }

@@ -9,14 +9,14 @@ import javax.inject.Inject;
 import static com.google.common.truth.Truth.assertThat;
 
 public final class ParallelWebCrawlerTest {
-  @Inject
-  private ParallelWebCrawler parallelWebCrawler;
+    @Inject
+    private ParallelWebCrawler parallelWebCrawler;
 
-  @Test
-  public void testMaxParallelism() {
-    CrawlerConfiguration config = new CrawlerConfiguration.Builder().build();
-    Guice.createInjector(new WebCrawlerModule(config), new NoOpProfilerModule())
-        .injectMembers(this);
-    assertThat(parallelWebCrawler.getMaxParallelism()).isGreaterThan(1);
-  }
+    @Test
+    public void testMaxParallelism() {
+        CrawlerConfiguration config = new CrawlerConfiguration.Builder().build();
+        Guice.createInjector(new WebCrawlerModule(config), new NoOpProfilerModule())
+                .injectMembers(this);
+        assertThat(parallelWebCrawler.getMaxParallelism()).isGreaterThan(1);
+    }
 }

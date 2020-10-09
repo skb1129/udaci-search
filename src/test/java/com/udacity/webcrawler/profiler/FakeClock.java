@@ -12,52 +12,52 @@ import java.util.Objects;
  */
 public final class FakeClock extends Clock {
 
-  private Instant now;
-  private ZoneId zoneId;
+    private Instant now;
+    private ZoneId zoneId;
 
-  @Inject
-  public FakeClock() {
-    this(Instant.now(), ZoneId.systemDefault());
-  }
+    @Inject
+    public FakeClock() {
+        this(Instant.now(), ZoneId.systemDefault());
+    }
 
-  public FakeClock(Instant now, ZoneId zoneId) {
-    this.now = Objects.requireNonNull(now);
-    this.zoneId = Objects.requireNonNull(zoneId);
-  }
+    public FakeClock(Instant now, ZoneId zoneId) {
+        this.now = Objects.requireNonNull(now);
+        this.zoneId = Objects.requireNonNull(zoneId);
+    }
 
-  @Override
-  public ZoneId getZone() {
-    return zoneId;
-  }
+    @Override
+    public ZoneId getZone() {
+        return zoneId;
+    }
 
-  @Override
-  public Clock withZone(ZoneId zone) {
-    return new FakeClock(now, zone);
-  }
+    /**
+     * Sets the zone of the fake clock.
+     */
+    public void setZone(ZoneId zoneId) {
+        this.zoneId = Objects.requireNonNull(zoneId);
+    }
 
-  @Override
-  public Instant instant() {
-    return now;
-  }
+    @Override
+    public Clock withZone(ZoneId zone) {
+        return new FakeClock(now, zone);
+    }
 
-  /**
-   * Increments the time of the fake clock by the given amount.
-   */
-  public void tick(Duration duration) {
-    now = now.plus(Objects.requireNonNull(duration));
-  }
+    @Override
+    public Instant instant() {
+        return now;
+    }
 
-  /**
-   * Sets the time of the fake clock.
-   */
-  public void setTime(Instant instant) {
-    this.now = Objects.requireNonNull(instant);
-  }
+    /**
+     * Increments the time of the fake clock by the given amount.
+     */
+    public void tick(Duration duration) {
+        now = now.plus(Objects.requireNonNull(duration));
+    }
 
-  /**
-   * Sets the zone of the fake clock.
-   */
-  public void setZone(ZoneId zoneId) {
-    this.zoneId = Objects.requireNonNull(zoneId);
-  }
+    /**
+     * Sets the time of the fake clock.
+     */
+    public void setTime(Instant instant) {
+        this.now = Objects.requireNonNull(instant);
+    }
 }

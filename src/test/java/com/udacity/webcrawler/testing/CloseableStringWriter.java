@@ -10,20 +10,20 @@ import java.io.StringWriter;
  * an {@link IOException}, but for {@link StringWriter}s the {@link #close()} method does nothing.
  */
 public final class CloseableStringWriter extends StringWriter {
-  private boolean closed = false;
+    private boolean closed = false;
 
-  @Override
-  public void close() throws IOException {
-    if (closed) {
-      throw new IOException("stream is closed");
+    @Override
+    public void close() throws IOException {
+        if (closed) {
+            throw new IOException("stream is closed");
+        }
+        closed = true;
     }
-    closed = true;
-  }
 
-  /**
-   * Returns whether this writer has been closed.
-   */
-  public boolean isClosed() {
-    return closed;
-  }
+    /**
+     * Returns whether this writer has been closed.
+     */
+    public boolean isClosed() {
+        return closed;
+    }
 }
