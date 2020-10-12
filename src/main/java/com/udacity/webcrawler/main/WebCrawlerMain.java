@@ -1,5 +1,6 @@
 package com.udacity.webcrawler.main;
 
+import com.google.common.base.Strings;
 import com.google.inject.Guice;
 import com.udacity.webcrawler.WebCrawler;
 import com.udacity.webcrawler.WebCrawlerModule;
@@ -11,6 +12,7 @@ import com.udacity.webcrawler.profiler.Profiler;
 import com.udacity.webcrawler.profiler.ProfilerModule;
 
 import javax.inject.Inject;
+import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -41,7 +43,12 @@ public final class WebCrawlerMain {
 
         CrawlResult result = crawler.crawl(config.getStartPages());
         CrawlResultWriter resultWriter = new CrawlResultWriter(result);
-        // TODO: Write the crawl results to a JSON file (or System.out if the file name is empty)
+        String path = config.getResultPath();
+        if (Strings.isNullOrEmpty(path)) {
+            resultWriter.write(new OutputStreamWriter(System.out));
+        } else {
+            resultWriter.write(Path.of(path));
+        }
         // TODO: Write the profile data to a text file (or System.out if the file name is empty)
     }
 }
