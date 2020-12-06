@@ -32,8 +32,8 @@ public final class CrawlResultWriter {
      */
     public void write(Path path) {
         ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            objectMapper.writeValue(Files.newBufferedWriter(path), this.result);
+        try (Writer writer = Files.newBufferedWriter(path)) {
+            objectMapper.writeValue(writer, this.result);
         } catch (IOException exception) {
             exception.printStackTrace();
         }

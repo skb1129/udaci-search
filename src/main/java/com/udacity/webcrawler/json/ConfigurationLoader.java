@@ -48,11 +48,8 @@ public final class ConfigurationLoader {
      * @return the loaded {@link CrawlerConfiguration}.
      */
     public CrawlerConfiguration load() {
-        try {
-            Reader reader = Files.newBufferedReader(path);
-            CrawlerConfiguration crawlerConfiguration = read(reader);
-            reader.close();
-            return crawlerConfiguration;
+        try (Reader reader = Files.newBufferedReader(path)) {
+            return read(reader);
         } catch (IOException exception) {
             exception.printStackTrace();
             return new CrawlerConfiguration.Builder().build();
