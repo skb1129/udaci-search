@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.Pattern;
 
@@ -25,8 +25,8 @@ final class ParallelWebCrawler implements WebCrawler {
     private final int maxDepth;
     private final List<Pattern> ignoredUrls;
 
-    private final ConcurrentMap<String, Integer> counts = new ConcurrentHashMap<>();
-    private final ConcurrentSkipListSet<String> visitedUrls = new ConcurrentSkipListSet<>();
+    private final Map<String, Integer> counts = Collections.synchronizedMap(new HashMap<>());
+    private final Set<String> visitedUrls = Collections.synchronizedSet(new HashSet<>());
 
     @Inject
     ParallelWebCrawler(
@@ -48,10 +48,7 @@ final class ParallelWebCrawler implements WebCrawler {
 
     @Override
     public CrawlResult crawl(List<String> startingUrls) {
-        startingUrls.forEach(url -> {
-            if (isIgnoredOrIsVisited(url)) return;
-            pool.invoke(new CrawlAction(url, maxDepth));
-        });
+        startingUrls.forEach(url -> pool.invoke(new CrawlAction(url, maxDepth)));
         return new CrawlResult.Builder()
                 .setWordCounts(counts.isEmpty() ? counts : WordCounts.sort(counts, popularWordCount))
                 .setUrlsVisited(visitedUrls.size())
@@ -84,7 +81,7 @@ final class ParallelWebCrawler implements WebCrawler {
         @Override
         protected void compute() {
             Instant deadline = clock.instant().plus(timeout);
-            if (maxDepth == 0 || clock.instant().isAfter(deadline)) {
+            if (isIgnoredOrIsVisited(url) || maxDepth == 0 || clock.instant().isAfter(deadline)) {
                 return;
             }
             visitedUrls.add(url);
@@ -96,10 +93,7 @@ final class ParallelWebCrawler implements WebCrawler {
                     counts.put(key, value);
                 }
             });
-            result.getLinks().forEach(link -> {
-                if (isIgnoredOrIsVisited(link)) return;
-                pool.invoke(new CrawlAction(link, maxDepth - 1));
-            });
+            result.getLinks().forEach(link -> pool.invoke(new CrawlAction(link, maxDepth - 1)));
         }
     }
 }
