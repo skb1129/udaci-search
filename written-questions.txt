@@ -11,6 +11,10 @@ Q1. Run the web crawler using the configurations located at src/main/config/writ
 
     Why did the parser take more time when run with ParallelWebCrawler?
 
+A1: Because multiple processor cores were already being used by the crawler and the parser had to wait for a free
+    processor core.
+
+
 
 Q2. Your manager ran your crawler on her old personal computer, using the configurations from Q1, and she notices that
     the sequential crawler actually outperforms the parallel crawler. She would like to know why.
@@ -21,12 +25,27 @@ Q2. Your manager ran your crawler on her old personal computer, using the config
     (b) Suggest one scenario in which the parallel web crawler will almost certainly perform better than the sequential
         crawler. Why will it perform better?
 
+A1: As the computer is really old, it may not have enough processor cores for the parallel crawler. The multiple threads
+    in the parallel crawler now have to wait for the single processor core to be free so that it can be used by the next
+    thread. This will not be the case for sequential crawler as it will process all information in a single thread.
+
+    The parallel web crawler will outperform sequential when it is run on a multi-processor computer with a
+    configuration that requires crawling a significantly large amount of webpages.
+
+
 
 Q3. Analyze your method profiler through the lens of Aspect Oriented Programming, by answering the following questions:
 
     (a) What cross-cutting concern is being addressed by the com.udacity.webcrawler.profiler.Profiler class?
 
     (b) What are the join points of the Profiler in the web crawler program?
+
+A1: The Profiler class allows use to make sure that the program we have implemented recently is actually better in
+    performance with respect to the legacy program.
+
+    The join points would be the wrap method of the ProfilerImpl and the invoke method of the
+    ProfilingMethodInterceptor.
+
 
 
 Q4. Identify three (3) different design patterns used in this project, and explain which interfaces, classes, and/or
@@ -35,4 +54,14 @@ Q4. Identify three (3) different design patterns used in this project, and expla
     For each pattern, name one thing about the pattern that you LIKED, and one thing you DISLIKED. If you did not like
     anything, you can name two things you disliked.
 
+A4: Singleton Pattern -
+    LIKE: Saves memory because object is not created at each request. Only single instance is reused again and again.
+    DISLIKE: They make unit testing harder as you cannot isolate a global instance.
 
+    Builder Pattern -
+    LIKE: Provides better control over the construction process.
+    DISLIKE: It creates more code to be written.
+
+    Abstract Factory Pattern -
+    LIKE: Promotes consistency among objects.
+    DISLIKE: A change in abstract class would require a change in all subclasses.
