@@ -1,11 +1,10 @@
 package com.udacity.webcrawler.profiler;
 
 import javax.inject.Inject;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Proxy;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Clock;
 import java.time.ZonedDateTime;
@@ -41,10 +40,9 @@ final class ProfilerImpl implements Profiler {
 
     @Override
     public void writeData(Path path) throws IOException {
-        File file = path.toFile();
-        Writer writer = new FileWriter(file, file.exists());
-        writeData(writer);
-        writer.close();
+        try (Writer writer = Files.newBufferedWriter(path)) {
+            writeData(writer);
+        }
     }
 
     @Override

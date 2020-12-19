@@ -55,13 +55,16 @@ Q4. Identify three (3) different design patterns used in this project, and expla
     anything, you can name two things you disliked.
 
 A4: Singleton Pattern -
+    USE: It is being used by "WebCrawlerModule" and "ProfilerModule".
     LIKE: Saves memory because object is not created at each request. Only single instance is reused again and again.
     DISLIKE: They make unit testing harder as you cannot isolate a global instance.
 
     Builder Pattern -
+    USE: It is being used by "CrawlerConfiguration" and "CrawlResult".
     LIKE: Provides better control over the construction process.
     DISLIKE: It creates more code to be written.
 
     Abstract Factory Pattern -
+    USE: It is being used by "Profiler", "WebCrawler", "PageParser" and "PageParserFactory"
     LIKE: Promotes consistency among objects.
     DISLIKE: A change in abstract class would require a change in all subclasses.

@@ -38,7 +38,7 @@ public final class ConfigurationLoader {
             return objectMapper.readValue(reader, CrawlerConfiguration.Builder.class).build();
         } catch (IOException exception) {
             exception.printStackTrace();
-            return new CrawlerConfiguration.Builder().build();
+            return null;
         }
     }
 
@@ -52,7 +52,7 @@ public final class ConfigurationLoader {
             return read(reader);
         } catch (IOException exception) {
             exception.printStackTrace();
-            return new CrawlerConfiguration.Builder().build();
+            return null;
         }
     }
 }

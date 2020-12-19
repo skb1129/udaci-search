@@ -55,13 +55,13 @@ final class ParallelWebCrawler implements WebCrawler {
                 .build();
     }
 
-    private boolean isIgnoredOrIsVisited(String url) {
+    private boolean isIgnored(String url) {
         for (Pattern pattern : ignoredUrls) {
             if (pattern.matcher(url).matches()) {
                 return true;
             }
         }
-        return visitedUrls.contains(url);
+        return false;
     }
 
     @Override
@@ -81,18 +81,11 @@ final class ParallelWebCrawler implements WebCrawler {
         @Override
         protected void compute() {
             Instant deadline = clock.instant().plus(timeout);
-            if (isIgnoredOrIsVisited(url) || maxDepth == 0 || clock.instant().isAfter(deadline)) {
+            if (isIgnored(url) || maxDepth == 0 || clock.instant().isAfter(deadline) || !visitedUrls.add(url)) {
                 return;
             }
-            visitedUrls.add(url);
             PageParser.Result result = parserFactory.get(url).parse();
-            result.getWordCounts().forEach((key, value) -> {
-                if (counts.containsKey(key)) {
-                    counts.put(key, value + counts.get(key));
-                } else {
-                    counts.put(key, value);
-                }
-            });
+            result.getWordCounts().forEach((key, value) -> counts.compute(key, (k, v) -> Objects.isNull(v) ? value : v + value));
             result.getLinks().forEach(link -> pool.invoke(new CrawlAction(link, maxDepth - 1)));
         }
     }
