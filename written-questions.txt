@@ -11,8 +11,9 @@ Q1. Run the web crawler using the configurations located at src/main/config/writ
 
     Why did the parser take more time when run with ParallelWebCrawler?
 
-A1: Because multiple processor cores were already being used by the crawler and the parser had to wait for a free
-    processor core.
+A1: The profiler records the total time spent in the method by all threads, even if the total program execution time is
+    about the same. In the case of ParallelWebCrawler, the PageParserImpl#parse was invoked multiple times by multiple
+    threads and its total execution time in all threads was added and returned by the Profiler.
 
 
 
@@ -40,11 +41,9 @@ Q3. Analyze your method profiler through the lens of Aspect Oriented Programming
 
     (b) What are the join points of the Profiler in the web crawler program?
 
-A1: The Profiler class allows use to make sure that the program we have implemented recently is actually better in
-    performance with respect to the legacy program.
+A1: The cross-cutting concern is method performance profiling.
 
-    The join points would be the wrap method of the ProfilerImpl and the invoke method of the
-    ProfilingMethodInterceptor.
+    The join points are method invocations.
 
 
 
