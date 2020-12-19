@@ -48,7 +48,8 @@ final class ParallelWebCrawler implements WebCrawler {
 
     @Override
     public CrawlResult crawl(List<String> startingUrls) {
-        startingUrls.forEach(url -> pool.invoke(new CrawlAction(url, maxDepth)));
+        Instant deadline = clock.instant().plus(timeout);
+        startingUrls.forEach(url -> pool.invoke(new CrawlAction(url, maxDepth, deadline)));
         return new CrawlResult.Builder()
                 .setWordCounts(counts.isEmpty() ? counts : WordCounts.sort(counts, popularWordCount))
                 .setUrlsVisited(visitedUrls.size())
@@ -72,21 +73,22 @@ final class ParallelWebCrawler implements WebCrawler {
     public class CrawlAction extends RecursiveAction {
         private final String url;
         private final int maxDepth;
+        private final Instant deadline;
 
-        CrawlAction(String url, int maxDepth) {
+        CrawlAction(String url, int maxDepth, Instant deadline) {
             this.url = url;
             this.maxDepth = maxDepth;
+            this.deadline = deadline;
         }
 
         @Override
         protected void compute() {
-            Instant deadline = clock.instant().plus(timeout);
             if (isIgnored(url) || maxDepth == 0 || clock.instant().isAfter(deadline) || !visitedUrls.add(url)) {
                 return;
             }
             PageParser.Result result = parserFactory.get(url).parse();
             result.getWordCounts().forEach((key, value) -> counts.compute(key, (k, v) -> Objects.isNull(v) ? value : v + value));
-            result.getLinks().forEach(link -> pool.invoke(new CrawlAction(link, maxDepth - 1)));
+            result.getLinks().forEach(link -> pool.invoke(new CrawlAction(link, maxDepth - 1, deadline)));
         }
     }
 }

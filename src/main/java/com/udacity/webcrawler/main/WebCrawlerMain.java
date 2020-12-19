@@ -48,7 +48,6 @@ public final class WebCrawlerMain {
             resultWriter.write(new OutputStreamWriter(System.out));
         } else {
             resultWriter.write(Path.of(path));
-            profiler.writeData(Path.of(path));
         }
 
         String profilePath = config.getProfileOutputPath();
